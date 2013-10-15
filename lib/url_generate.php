@@ -75,14 +75,25 @@ class url_generate extends url_control
 
                     $query = '  SELECT  ' . $name . '   AS name,
                                         ' . $id . '     AS id
-                                FROM    ' . $table . '
+                                FROM    ' . $table . '  ORDER BY name
                                 ';
                     $s = rex_sql::factory();
                     $s->setQuery($query);
                     if ($s->getRows() >= 1) {
                         $urls = $s->getArray();
+                        $name_before = "";
+                        $modnum = 1;
                         foreach ($urls as $url) {
+                            $actname = $url['name'];
+                            if($name_before==$url['name']) {
+                                $url['name'] = $url['name'].'-'.$modnum;
+                                $modnum = $modnum +1;
+                            } else {
+                            $modnum = 1;
+                            }
+
                             $paths[ $table ][ $article_id ][ $clang ][ $url['id'] ] = $path . strtolower(rex_parse_article_name($url['name'])) . '.html';
+                            $name_before = $actname;
                         }
                     }
 
